@@ -24,6 +24,10 @@ The screen already exists. Variants are rendered **on the same screen**, selecte
 
 If the prototype is for something that doesn't yet have a screen but *would naturally live inside one* (a new section of the dashboard, a new card on the settings screen, a new step in an existing flow), it's still sub-shape A. Mount the variants inside the host screen.
 
+When the question is the shell itself, navigation, sidebar or theme, the variant is the shell plus the two screens it is judged on: the home and the busiest list. Every other screen wears the shell with its current content.
+
+A thin host screen hides design problems as surely as a vacuum does. Seed what the variants need through the project's own factories, in a seeder named as a prototype: enough rows to fill one screen and one of every state, no more. The seeder rides to the throwaway branch with the rest.
+
 ### Sub-shape B: a new screen (when there is no host)
 
 Only use this when the thing being prototyped genuinely has no existing screen to live inside (an entirely new top-level surface, or a flow that can't be embedded anywhere sensible).
@@ -67,6 +71,8 @@ Draft each variant. Hold each one to:
 
 Variants must be **structurally different**: different layout, different information hierarchy, different primary affordance, or a different interaction, not just different colours. Three slightly-tweaked card grids isn't a UI prototype, it's wallpaper. If two drafts come out too similar, redo one with explicit "do not use a card grid" guidance.
 
+A variant is done when it renders with real data at one viewport in the OS's default colour scheme. Dark mode, other widths, wording and polish wait for the winner.
+
 ### 3. Wire them together
 
 Create a single switcher on the screen. Pseudo-code; the carrier and the overlay come from the app's class in PLATFORMS.md:
@@ -101,11 +107,11 @@ Put the switcher in a single shared component so every sub-shape can reuse it. L
 
 ### 5. Hand it over
 
-Surface the run card: the launch, the reach step, and the variant keys. The user will flip through whenever they get to it. The interesting feedback is usually **"I want the header from B with the sidebar from C"**, which is the actual design they want.
+Hand over as soon as all N render. The verdict decides where polish goes. Surface the run card: the launch, the reach step, and the variant keys. The user will flip through whenever they get to it. The interesting feedback is usually **"I want the header from B with the sidebar from C"**, which is the actual design they want.
 
 ### 6. Capture the answer and clean up
 
-Once a variant has won, capture the answer (which variant and why), then capture the prototype the way the [SKILL](SKILL.md) describes. Fold the winner into the real code and move the rest onto the throwaway branch, not into main:
+Once a variant has won, capture the answer (which variant and why), then capture the prototype the way the [SKILL](SKILL.md) describes: the fold on its own branch off main, the prototype branch frozen. Fold the winner into the real code and move the rest onto the throwaway branch, not into main:
 
 - **Sub-shape A**: fold the winner into the existing screen; drop the losing variants and the switcher from main.
 - **Sub-shape B**: promote the winning variant to a real screen; drop the throwaway screen and the switcher from main.
