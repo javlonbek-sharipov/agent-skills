@@ -2,7 +2,7 @@
 
 A single, self-contained HTML file (a **shareable demo**) that lets anyone drive a state model by clicking buttons. Use this when the question is about **business logic, state transitions, or data shape**: the kind of thing that looks reasonable on paper but only feels wrong once you push it through real cases.
 
-Because it's one file with nothing to install, you can hand it to a non-developer (a designer, a PM, a domain expert) and let them feel the model for themselves. So it speaks their language, not the code's.
+Because it's one file with nothing to install, you can hand it to a non-developer (a designer, a PM, a domain expert) and let them feel the model for themselves. So it speaks their language, not the code's. It stays one HTML file whatever the app is built in; it moves into the app only on the two triggers near the end of this file.
 
 ## When this is the right shape
 
@@ -15,13 +15,13 @@ If the question is "what should this look like," this is the wrong branch. Use [
 
 ## Process
 
-### 1. State the question
+### 1. Write the run card
 
-Before writing code, write down what state model and what question you're prototyping. One paragraph, at the top of the demo (in a visible intro, not just a comment). A logic prototype that answers the wrong question is pure waste, so make the question explicit so it can be checked later, whether the user is watching now or returning to it AFK.
+Before writing code, write down what state model and what question you're prototyping. One paragraph, at the top of the demo as its visible intro, followed by the rest of the run card from [SKILL.md](SKILL.md) (for an HTML demo the launch is "open the file"). A logic prototype that answers the wrong question is pure waste, so make the question explicit so it can be checked later, whether the user is watching now or returning to it AFK.
 
 ### 2. Isolate the logic in a portable module
 
-Put the actual logic (the bit that's answering the question) in a single `<script>` block written as a small, pure module that could be lifted out and dropped into the real codebase later. The page around it is throwaway; this module isn't.
+Put the actual logic (the bit that's answering the question) in a single `<script>` block written as a small, pure module that lifts into the real codebase later or, when the app isn't JavaScript, ports to it line by line: the shape survives the translation, which is the point. The page around it is throwaway; this module isn't.
 
 The right shape depends on the question:
 
@@ -30,7 +30,7 @@ The right shape depends on the question:
 - **A small set of pure functions** over a plain data type. Good when there's no implicit current state, just transformations.
 - **A class or module with a clear method surface** when the logic genuinely owns ongoing internal state.
 
-Pick whichever shape best fits the question being asked, *not* whichever is easiest to wire to a page. Keep it pure: no DOM, no `document`, no button handlers reaching inside it. The page calls into it; nothing flows the other direction. This is what makes the prototype useful past its own lifetime: once the question's answered, the validated reducer / machine / function set lifts into the real module on its own.
+Pick whichever shape best fits the question being asked, *not* whichever is easiest to wire to a page. Keep it pure: no DOM, no `document`, no button handlers reaching inside it. The page calls into it; nothing flows the other direction. This is what makes the prototype useful past its own lifetime: once the question's answered, the validated reducer / machine / function set lifts or ports into the real module on its own.
 
 ### 3. Build the shareable HTML file
 
@@ -40,9 +40,9 @@ Write it for a non-developer. Every label is in **domain language**, not code: b
 
 Lay it out with a clean hierarchy, top to bottom:
 
-1. **Title and one-line explanation** of what this demo lets you explore (the question from step 1).
+1. **Run card**: title, the one-line explanation of what this demo lets you explore (the question from step 1), and the rest of the card.
 2. **Current state**: the full relevant state, rendered as a readable panel (labelled fields, not a raw JSON dump), re-rendered after every click so the change is visible. Where it helps a non-developer follow, call out what just changed.
-3. **Free-play buttons**: one button per action, always available, so anyone can poke at the model in any order. Each click dispatches its action and re-renders the state.
+3. **Free-play buttons**: one button per action, always available, so anyone can poke at the model in any order. Each click dispatches its action and re-renders the state. Platform behaviour is a button too: "Permission denied", "App went to background", "Network dropped" dispatch the event the operating system would, so the demo stays one file even when the real logic reacts to the OS.
 4. **Guided walkthroughs**: a set of **scenarios**, one per tab. Each tab holds a short plain-language description of the scenario (the situation it sets up and what to watch for) and underneath it, the ordered **buttons to press** for that scenario. Each step is a real button: clicking it performs that action and moves to the next step. Starting a walkthrough resets to a known initial state so the scenario runs the same way every time.
 
 Choose scenarios that demonstrate the awkward cases, the ones hard to reason about on paper: the happy path, a tricky edge case, an attempt at something that should be illegal.
@@ -55,7 +55,16 @@ Send them the file, or open it for them. They'll click through the walkthroughs 
 
 ### 5. Capture the answer and the prototype
 
-Once the prototype has answered its question, capture the answer, then capture the prototype the way the [SKILL](SKILL.md) describes. The logic-specific mapping: the validated reducer / machine / function set lifts into the real module (the decision, absorbed); the HTML shell rides along to the throwaway branch that keeps the prototype as a primary source, and being one self-contained file, it stays trivially re-runnable there.
+Once the prototype has answered its question, capture the answer, then capture the prototype the way the [SKILL](SKILL.md) describes. The logic-specific mapping: the validated reducer / machine / function set lifts or ports into the real module (the decision, absorbed); the HTML shell rides along to the throwaway branch that keeps the prototype as a primary source, and being one self-contained file, it stays trivially re-runnable there.
+
+## When the demo moves into the app
+
+The HTML demo is the default because anyone can open it. Two triggers, and only these, move it into the app instead:
+
+- **The real language is asked for.** The user wants the module in the app's own language from the start, and the people driving the demo are developers who can run a dev build.
+- **The question is about the runtime itself.** It can't be modelled as a button: "does iOS really deliver this event in the background?", "what does the platform do when the token expires mid-request?". The demo has to run where the answer lives.
+
+Platform dependence alone is no trigger: an OS event is a button in the HTML demo. When one trigger holds, build a **debug screen** in the app with the same four-part layout as the HTML page (run card, state panel, free-play buttons, scenario tabs), over a pure module in the app's language that never touches the screen. Reach it and hide it from release the way [PLATFORMS.md](PLATFORMS.md) describes for a new screen. What is lost is sharing: a non-developer gets a screen recording of the walkthrough.
 
 ## Anti-patterns
 
@@ -63,5 +72,6 @@ Once the prototype has answered its question, capture the answer, then capture t
 - **Don't wire it to the real database.** Use in-memory state unless the question is specifically about persistence.
 - **Don't generalise.** No "what if we wanted to support X later." The prototype answers one question.
 - **Don't blur the logic and the page together.** If the pure module references the DOM, `document`, or button handlers, it's no longer liftable. Keep the page as a thin shell over a pure module.
-- **Don't reach for a framework, bundler, or server.** One file the recipient double-clicks; a React app or a dev server defeats "shareable".
+- **Don't reach for a framework, bundler, or server for the HTML demo.** One file the recipient double-clicks; a React app or a dev server defeats "shareable". The in-app debug screen is the one exception, and only on a trigger above.
+- **Don't move into the app because the stack isn't JavaScript.** Porting a small pure module is cheap; losing the double-click is not. Port the module, keep the file.
 - **Don't ship the HTML shell into production.** The page is optimised for being clicked through by hand. The logic module behind it is the bit worth keeping.

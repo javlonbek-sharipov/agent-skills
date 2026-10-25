@@ -71,7 +71,7 @@ Model-invoked (the agent reaches for them; you can type them too):
 | [`tdd`](skills/tdd/SKILL.md) | Red-green loop at pre-agreed seams |
 | [`code-review`](skills/code-review/SKILL.md) | Standards and Spec review of committed or local changes, including new files |
 | [`pr`](skills/pr/SKILL.md) | PR body: ticket, smallest visual, evidence, merge danger |
-| [`prototype`](skills/prototype/SKILL.md) | Throwaway code that answers one design question |
+| [`prototype`](skills/prototype/SKILL.md) | Throwaway code, in the app's own stack, that answers one design question |
 | [`research`](skills/research/SKILL.md) | Background agent researches primary sources into `docs/research/` |
 | [`wizard`](skills/wizard/SKILL.md) | Bash wizard for steps only a human can do |
 | [`writing-for-agents`](skills/writing-for-agents/SKILL.md) | How to write skills, `CLAUDE.md` and other docs agents read |
