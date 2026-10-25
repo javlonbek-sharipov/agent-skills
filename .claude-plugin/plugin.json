@@ -20,6 +20,7 @@
   "skills": [
     "./skills/skill-guide",
     "./skills/setup-agent-skills",
+    "./skills/setup-verification",
     "./skills/grill-with-docs",
     "./skills/to-spec",
     "./skills/to-tickets",

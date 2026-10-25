@@ -29,6 +29,8 @@ scripts/link-skills.sh
 
 Run `/setup-agent-skills` in the repo you work on. It records the issue tracker (GitHub, GitLab, local markdown, or one you describe), the triage labels, and the domain doc layout in `docs/agents/`, plus a short block in `CLAUDE.md` or `AGENTS.md`. **Commit that output.** It is the contract every collaborator's agent reads, so the whole team publishes tickets to the same place and speaks the same labels.
 
+Run `/setup-verification` when the repo needs a repeatable way to verify real user behavior. It writes `docs/agents/verification.md` with launch, driver, journeys, evidence, and cleanup instructions, and proves a journey before reporting it verified. Re-run it to refresh the recipe. Implementation, triage, and PR writing use this shared file; its absence does not block work.
+
 ## The flow
 
 Type `/skill-guide` whenever you don't know which skill fits. The short version:
@@ -48,11 +50,12 @@ User-invoked (you type them):
 | --- | --- |
 | [`skill-guide`](skills/skill-guide/SKILL.md) | Router: which skill or flow fits your situation |
 | [`setup-agent-skills`](skills/setup-agent-skills/SKILL.md) | Configure a repo's tracker, triage labels and domain docs, once per repo |
+| [`setup-verification`](skills/setup-verification/SKILL.md) | Create or refresh a shared recipe for verifying real user behavior |
 | [`grill-with-docs`](skills/grill-with-docs/SKILL.md) | Relentless interview that also writes `GLOSSARY.md` and ADRs |
 | [`to-spec`](skills/to-spec/SKILL.md) | Turn the conversation into a spec on the tracker |
 | [`to-tickets`](skills/to-tickets/SKILL.md) | Split a spec into tracer-bullet tickets with blocking edges |
 | [`implement`](skills/implement/SKILL.md) | Build one ticket: claim, branch, TDD, review, PR if needed |
-| [`implement-spec`](skills/implement-spec/SKILL.md) | Build a whole spec with parallel subagents on an integration branch |
+| [`implement-spec`](skills/implement-spec/SKILL.md) | Build a spec with parallel implementers and serialized, verified integration |
 | [`triage`](skills/triage/SKILL.md) | Move incoming issues and external PRs through triage roles to agent-ready briefs |
 | [`improve-codebase-architecture`](skills/improve-codebase-architecture/SKILL.md) | Find deepening opportunities, report them visually, grill through one |
 | [`retro`](skills/retro/SKILL.md) | Retrospective: improve the agent's environment, not the code |
@@ -66,7 +69,7 @@ Model-invoked (the agent reaches for them; you can type them too):
 | [`domain-modeling`](skills/domain-modeling/SKILL.md) | Sharpen terms, write `GLOSSARY.md` and ADRs |
 | [`codebase-design`](skills/codebase-design/SKILL.md) | Deep-module vocabulary: module, interface, seam, adapter |
 | [`tdd`](skills/tdd/SKILL.md) | Red-green loop at pre-agreed seams |
-| [`code-review`](skills/code-review/SKILL.md) | Two-axis review of a diff: Standards and Spec |
+| [`code-review`](skills/code-review/SKILL.md) | Standards and Spec review of committed or local changes, including new files |
 | [`pr`](skills/pr/SKILL.md) | PR body: ticket, smallest visual, evidence, merge danger |
 | [`prototype`](skills/prototype/SKILL.md) | Throwaway code that answers one design question |
 | [`research`](skills/research/SKILL.md) | Background agent researches primary sources into `docs/research/` |
@@ -77,6 +80,8 @@ Model-invoked (the agent reaches for them; you can type them too):
 
 - Setup output in `docs/agents/` is committed and shared.
 - `/implement` claims a ticket before building. An assigned ticket is taken.
+- Review includes the task's uncommitted changes before committing. Implementers validate findings before fixing or dismissing them.
+- `/implement-spec` serializes integration merges and checks the combined result before releasing dependent tickets.
 - Work lands as a branch per ticket, plus a PR whose body closes the ticket when the repo works through PRs.
 - A repo's `CLAUDE.md` / `AGENTS.md` wins over skill defaults: if it says PRs only on request, or that CI owns repo-wide checks, `/implement` and `/implement-spec` stop at the commit and run targeted checks only.
 - `GLOSSARY.md`, `docs/adr/`, `CODING_STANDARDS.md` and `.out-of-scope/` are reviewed and merged like code.
@@ -88,4 +93,8 @@ See [CLAUDE.md](CLAUDE.md) for the invariants: one folder per skill, every skill
 
 ## Credits and license
 
-The skills derive from Matt Pocock's [skills](https://github.com/mattpocock/skills) repository, MIT licensed. The `pr` skill's summary visuals come from Dex Horthy's `show-me` (see `skills/pr/CREDITS.md`). This repo keeps the MIT license: see [LICENSE](LICENSE).
+The skills derive from Matt Pocock's [skills](https://github.com/mattpocock/skills) repository, MIT licensed. The `pr` skill's summary visuals come from Dex Horthy's `show-me`.
+
+Verification setup, finding resolution, integration checks, and blast-radius guidance adapt Lauren Tan's [pstack](https://github.com/cursor/plugins/blob/99b609a72323b70204eab407c622f436e858e112/pstack/README.md), also MIT licensed. The source links and notices travel with each adapted skill: [setup-verification](skills/setup-verification/CREDITS.md), [code-review](skills/code-review/CREDITS.md), [implement-spec](skills/implement-spec/CREDITS.md), and [pr](skills/pr/CREDITS.md).
+
+This repo keeps the MIT license: see [LICENSE](LICENSE).

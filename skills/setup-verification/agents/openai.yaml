@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Verification"
+  short_description: "Create or refresh a repo's verification recipe"
+policy:
+  allow_implicit_invocation: false

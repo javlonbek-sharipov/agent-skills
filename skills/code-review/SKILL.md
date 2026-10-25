@@ -1,9 +1,9 @@
 ---
 name: code-review
-description: "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
+description: "Review a branch, PR, or local changes since a fixed point along two axes: Standards and Spec. Runs both reviews in parallel sub-agents and reports them side by side. Local review includes staged, unstaged, and untracked files. Use for code review, work in progress, or \"review since X\"."
 ---
 
-Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
+Two-axis review of a captured changeset since a fixed point the user supplies:
 
 - **Standards**: does the code conform to this repo's documented coding standards?
 - **Spec**: does the code faithfully implement the originating issue / spec?
@@ -14,20 +14,29 @@ The issue tracker should have been provided to you. If not, tell the user to run
 
 ## Process
 
-### 1. Pin the fixed point
+### 1. Capture the review scope
 
 Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). If they didn't specify one, default to the repo's main branch (`origin/main`, else `main`, else `master`) and say which ref you used.
 
-Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
+Resolve the fixed point and `HEAD` to commit SHAs, then compute `git merge-base <base-sha> <head-sha>`. Capture the commit list with `git log <base-sha>..<head-sha> --oneline`. A bad ref or missing merge-base fails here.
 
-Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here, not inside two parallel sub-agents.
+Choose and state the scope once:
+
+- **Committed:** an explicitly requested branch or PR review uses `git diff <merge-base-sha> <head-sha>`. Uncommitted work is outside this scope.
+- **Working:** local implementation and work-in-progress review use `git diff <merge-base-sha>`, which includes committed changes plus the net staged and unstaged changes. Enumerate untracked files separately with `git ls-files --others --exclude-standard -z`, preserving the null-delimited paths; Git's diff does not include them.
+
+If the request does not choose, use Working when the checkout has local changes, otherwise Committed. Honor any narrower paths the caller supplies. Exclude unrelated pre-existing edits and generated verification artifacts from the selected patch and untracked files unless the user explicitly includes them in scope. Name the excluded paths or hunks in the report; surrounding code remains available as context.
+
+Save the selected patch, the untracked files being reviewed, and their original path mapping to a temporary snapshot outside the repo. Include the scope, captured SHAs, and commit list. Both reviewers read the same snapshot; they can consult original files for surrounding context. Keep the checkout stable until they finish, or recapture and repeat the affected review when it changes. Do not stage, stash, or commit files merely to include them in review.
+
+The scope is empty only when both its tracked patch and selected untracked files are empty. Report that before spawning reviewers.
 
 ### 2. Identify the spec source
 
 Look for the originating spec, in this order:
 
-1. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.), fetched via the workflow in the tracker doc.
-2. A path the user passed as an argument.
+1. The spec, ticket, or task brief supplied by the caller: use provided text or a file path directly, or fetch a supplied tracker reference using the tracker doc.
+2. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.), fetched via the workflow in the tracker doc.
 3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
 4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
 
@@ -61,13 +70,13 @@ Issue both sub-agent calls together, in the foreground, and aggregate the report
 
 **Standards sub-agent prompt** should include:
 
-- The full diff command and commit list.
+- The snapshot path, scope, captured SHAs, and commit list from step 1.
 - The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
-- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
+- The brief: "Report problems introduced or worsened by this changeset, using surrounding code for context. Per file/hunk, report (a) documented-standard violations: cite the standard (file + the rule); and (b) baseline smells: name the smell and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
 
 **Spec sub-agent prompt** should include:
 
-- The diff command and commit list.
+- The same snapshot path, scope, captured SHAs, and commit list.
 - The path or fetched contents of the spec.
 - The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
 

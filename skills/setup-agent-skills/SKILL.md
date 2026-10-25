@@ -81,6 +81,8 @@ Never create `AGENTS.md` when `CLAUDE.md` already exists (or vice versa); always
 
 If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
 
+Preserve sub-blocks owned by other setup skills, including `### Verification`; this run updates only Issue tracker, Triage labels, and Domain docs.
+
 The block:
 
 ```markdown

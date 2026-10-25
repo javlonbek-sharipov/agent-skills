@@ -73,6 +73,8 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: check it out, run the relevant tests or commands. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
 
+   Read `docs/agents/verification.md` when present and use the relevant journey to collect evidence, within the repo's steering-file limits for local checks. If it is missing, tell the user to run `/setup-verification` and continue with available repro methods. Distinguish a missing driver or fixture from an unconfirmed product bug; include the attempted path and evidence in the triage notes.
+
 4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for "grilling" and "domain-modeling", and grill it into shape a round of questions at a time, sharpening domain terms and updating `GLOSSARY.md`/ADRs inline as decisions land.
 
 5. **Apply the outcome:**

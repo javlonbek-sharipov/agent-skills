@@ -16,6 +16,8 @@ A **flow** is a path through the skills. Most paths run along one **main flow**,
 
 **`/setup-agent-skills`**: run once per repo, before the first flow. It records the issue tracker, the triage labels, and the domain doc layout in `docs/agents/` plus a short block in `CLAUDE.md` / `AGENTS.md`. Commit the result: the config travels through git, so every collaborator's agent publishes to the same tracker and speaks the same labels.
 
+**`/setup-verification`**: run when the repo needs a shared recipe for exercising real user behavior. It writes `docs/agents/verification.md`, proves a representative journey, and records what remains unverified. Re-run it to refresh the recipe as the product changes. Implementation, triage, and PR writing read it when present; setup is not a prerequisite for those workflows.
+
 ## The main flow: idea → ship
 
 The route most work travels. You have an idea and want it built.
@@ -28,10 +30,12 @@ The route most work travels. You have an idea and want it built.
 3. **Branch: is this a multi-session build?**
    - **Yes** → **`/to-spec`** (turn the thread into a spec), then **`/to-tickets`** to split it into tracer-bullet tickets, each declaring its **blocking edges**. Then work the tickets one of two ways:
      - **`/implement`** per ticket, **`/clear`ing context between each one**. It claims the ticket, works on its own branch, and raises a PR where the repo works that way. On a hosted tracker the edges are native blocking links, so any teammate (or agent) can grab a ticket whose blockers are done; on a local tracker that's one file per ticket under `.scratch/<feature>/issues/`, worked blockers-first by hand. Each ticket is self-contained, so the last one's context is disposable.
-     - **`/implement-spec`** for the whole spec in one run. It reads the tickets as a **task graph**, runs implementer subagents across the ready **frontier** in parallel, and lands everything on one **integration branch**. Reach for it when you'd rather orchestrate the build than drive each ticket yourself.
+     - **`/implement-spec`** for the whole spec in one run. It reads the tickets as a **task graph**, runs implementer subagents across the ready **frontier** in parallel, and lands everything on one **integration branch** through a single merger. Each integration result is checked before dependent tickets start. Reach for it when you'd rather orchestrate the build than drive each ticket yourself.
    - **No** → **`/implement`** right here, in the same context window.
 
    Either way, the code gets built by driving **`/tdd`** (one red-green slice at a time) and closes out with **`/code-review`**, a two-axis review (Standards + Spec) of the diff. `/implement` runs both per ticket; `/implement-spec`'s implementers each drive `/tdd`, and it runs one `/code-review` over the integration branch. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first (a bug fix included) without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
+
+   Local review captures staged, unstaged, and new files; an explicit branch or PR review captures committed changes. The implementation workflow validates the findings before applying fixes and records reasons for dismissals.
 
    When the work goes up as a pull request, **`/pr`** shapes the body: the ticket it closes, the smallest visual that shows the change, before/after evidence that it works, and a one-way or two-way door call. It's model-invoked, so the agent reaches for it whenever it writes a PR.
 

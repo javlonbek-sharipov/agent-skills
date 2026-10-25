@@ -29,9 +29,9 @@ Closes #<ticket>
 
 <optional: description>
 
-**Blast Radius:** <one-word description>
+**Blast Radius:** <affected users, callers, or data>
 
-<optional: potential ramifications of merge>
+<the assumption that limits the impact, with supporting evidence or marked unverified>
 ```
 
 ## Sections
@@ -169,8 +169,14 @@ Screenshots are S-tier - when the environment is set up for it and the change is
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
+For changes to user behavior, read `docs/agents/verification.md` when present and use evidence from its relevant journeys at the proposed revision. Name what ran and what remains unverified; recipe coverage from an older revision is not current proof. If the recipe is missing, tell the user to run `/setup-verification` and use available evidence. When further verification is needed, respect the repo's steering file for local versus CI-owned checks.
+
 ### Merge Danger
 
 Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
 
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+State which users, callers, or data can be affected. Follow relevant contracts beyond the diff, including persisted formats and external consumers.
+
+Name the assumption that limits the impact, then give its strongest available support: a cited implementation, a traced failure path ruled out, an executed check, or a reproduction in the running product. An assertion alone leaves the assumption unverified. Prefer the cheapest check that settles a material risk; link existing evidence instead of rerunning it without cause.
+
+Separate confirmed risks from cases checked and cleared. If the limiting assumption is still unverified, say so and name the missing check. Keep this proportional to the change; a documentation edit need not launch an app.
