@@ -25,3 +25,13 @@ Read the file at the referenced path. The user will normally pass the path or th
 - **Resolve**: set `Status: done` and append the outcome under `## Comments`.
 
 Local files suit solo work. For a team, commit `.scratch/` so everyone sees the same tickets, or re-run `/setup-agent-skills` and pick a hosted tracker.
+
+## Wayfinding operations
+
+Used by `/wayfinder`. The **map** is one file; its **decision tickets** are one file each beside it.
+
+- **Map**: `.scratch/<effort-slug>/map.md`, holding the map body.
+- **Child ticket**: `.scratch/<effort-slug>/issues/<NN>-<slug>.md`, numbered from `01`, with a `Type:` line (`research`, `prototype`, `grilling`, `task`) near the top and the question in the body.
+- **Blocking** and **claim**: as in **Claim and resolve a ticket**.
+- **Frontier query**: scan `issues/` for files with no `Status: done`, no `Assignee:`, and every blocker at `Status: done`. Lowest number wins.
+- **Resolve**: append the answer under `## Answer`, set `Status: done`, then append the gist and a relative link to the map's Decisions so far in `map.md`.

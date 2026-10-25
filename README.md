@@ -40,7 +40,7 @@ Type `/skill-guide` whenever you don't know which skill fits. The short version:
 3. `/implement` builds one ticket (claim, branch, `/tdd`, `/code-review`, `/pr`). `/implement-spec` orchestrates the whole graph onto an integration branch.
 4. `/retro` turns what went wrong into checks, standards and pointers for next time.
 
-`/triage` is the on-ramp for issues you didn't write. `/prototype`, `/research`, `/wizard` and `/handoff` sit beside the flow.
+`/triage` is the on-ramp for issues you didn't write; `/wayfinder` is the on-ramp for an effort too big to plan in one session. `/prototype`, `/research`, `/wizard` and `/handoff` sit beside the flow.
 
 ## Skills
 
@@ -60,6 +60,7 @@ User-invoked (you type them):
 | [`improve-codebase-architecture`](skills/improve-codebase-architecture/SKILL.md) | Find deepening opportunities, report them visually, grill through one |
 | [`retro`](skills/retro/SKILL.md) | Retrospective: improve the agent's environment, not the code |
 | [`handoff`](skills/handoff/SKILL.md) | Compact the conversation into a document another session or a colleague picks up |
+| [`wayfinder`](skills/wayfinder/SKILL.md) | Chart a multi-session effort as a map of decision tickets on the tracker, then resolve one per session |
 
 Model-invoked (the agent reaches for them; you can type them too):
 

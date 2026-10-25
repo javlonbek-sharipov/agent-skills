@@ -57,7 +57,7 @@ A starting situation that generates work, then merges onto the main flow.
 
 - **Something's broken** → **`/tdd`**: write the test that goes red on the bug, then make it green. Once the fix is in, run **`/retro`** in the same session to ask what would have prevented it; where the real finding is that there's no good seam to lock it down, that's a job for **`/improve-codebase-architecture`**.
 
-- **A huge, foggy effort**, too big for one session → push the fog back a piece at a time: **`/research`** for the facts, **`/prototype`** for the questions that need running code, **`/grill-with-docs`** for the decisions, recording each one as an ADR so the map survives across sessions and teammates. When the way is clear, merge onto the main flow at **`/to-spec`**.
+- **A huge, foggy effort**, too big to plan in one session → **`/wayfinder`**. It charts the effort as a **map** on the tracker: the destination, the fog not yet specifiable, and **decision tickets** (grilling, prototype, research, task) wired with blocking edges so the frontier shows in the tracker's own UI. Each later session loads the map, claims one ticket, resolves it, and stops. The split from `/grill-with-docs` is session count, not project size: if the opening breadth-first grill finds no fog, `/wayfinder` says so and you plan in one sitting instead. When the map clears, merge onto the main flow at **`/to-spec`** with the map issue, then `/to-tickets`.
 
 ## Codebase health
 
@@ -100,7 +100,7 @@ Off the main flow entirely.
 The skills share state through the repo and the tracker, so a few habits keep two people (or two agents) from colliding:
 
 - **One setup, committed.** `/setup-agent-skills` runs once; its output in `docs/agents/` is the contract every agent reads.
-- **Claim before you build.** `/implement` assigns the ticket to you first. A ticket with an assignee is taken.
+- **Claim before you build.** `/implement` assigns the ticket to you first, and `/wayfinder` claims a decision ticket the same way. A ticket with an assignee is taken.
 - **A branch per ticket, and a PR when the repo works that way.** Work lands through `/pr`-shaped pull requests that close their ticket, so main only moves by review.
 - **Steering files win.** When a repo's `CLAUDE.md` / `AGENTS.md` says PRs are opened only on request, or that CI owns the full suite, `/implement` and `/implement-spec` follow it: they stop at the commit and offer the PR, and run targeted checks only.
 - **Docs are code.** `GLOSSARY.md`, `docs/adr/`, `CODING_STANDARDS.md` and `.out-of-scope/` live in git; they merge, conflict, and get reviewed like code. Two branches can mint the same ADR number; the second to merge renumbers.

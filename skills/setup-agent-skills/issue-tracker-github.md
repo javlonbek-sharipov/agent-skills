@@ -39,3 +39,13 @@ Read it as in **Read an issue** above.
 - **Claim**: `gh issue edit <number> --add-assignee @me` before starting work, so a collaborator sees it is taken. Skip tickets that already carry an assignee unless the maintainer hands them over.
 - **Blocking edges**: GitHub's native issue dependencies. Add one with `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`, where `<blocker-db-id>` is the blocker's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, _not_ the `#number`). `issue_dependencies_summary.blocked_by` counts the open blockers. Where dependencies aren't available, put a `Blocked by: #<n>, #<n>` line at the top of the body. A ticket is unblocked when every blocker is closed.
 - **Resolve**: through the pull request when there is one (`Closes #<number>` in the PR body closes it on merge); otherwise `gh issue close <number> --comment "..."`.
+
+## Wayfinding operations
+
+Used by `/wayfinder`. The **map** is one issue; its **decision tickets** are child issues of it.
+
+- **Map**: `gh issue create --label wayfinder:map --body "..."`. Create the labels first if the repo lacks them (`gh label create wayfinder:map`, and one per ticket type).
+- **Child ticket**: a sub-issue of the map (see **Make an issue a sub-issue of a parent**), carrying exactly one label, `wayfinder:<type>` (`research`, `prototype`, `grilling`, `task`), and no triage label.
+- **Blocking** and **claim**: as in **Claim and resolve a ticket**. Native dependencies are canonical because the tracker UI then shows the frontier without opening the map.
+- **Frontier query**: `gh api repos/<owner>/<repo>/issues/<map>/sub_issues --jq '.[] | select(.state == "open") | {number, title, assignees: [.assignees[].login], blocked_by: .issue_dependencies_summary.blocked_by}'`, then drop any entry with an assignee or `blocked_by > 0` (or an open issue in its `Blocked by` line). First in map order wins. Without sub-issues, `gh issue list --state open --search "Part of #<map>"` instead.
+- **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append the gist and link to the map's Decisions so far (`gh issue edit <map> --body-file`).

@@ -39,3 +39,13 @@ Run `glab issue view <number> --comments`.
 - **Claim**: `glab issue update <number> --assignee @me` before starting work, so a collaborator sees it is taken. Skip tickets that already carry an assignee unless the maintainer hands them over.
 - **Blocking edges**: GitLab's native blocking link, added with the `/blocked_by #<n>` quick action posted as a note (`glab issue note <child> --message "/blocked_by #<blocker>"`). Native links are a Premium/Ultimate feature; on the free tier put a `Blocked by: #<n>, #<n>` line at the top of the description. A ticket is unblocked when every blocker is closed.
 - **Resolve**: through the merge request when there is one (`Closes #<number>` in the MR description closes it on merge); otherwise note the outcome with `glab issue note`, then `glab issue close <number>`.
+
+## Wayfinding operations
+
+Used by `/wayfinder`. The **map** is one issue; its **decision tickets** are child issues of it.
+
+- **Map**: `glab issue create --label wayfinder:map --description "..."`. A labelled issue works on every tier; an epic may hold the map where epics exist.
+- **Child ticket**: an issue with `Part of #<map>` at the top of its description, carrying exactly one label, `wayfinder:<type>` (`research`, `prototype`, `grilling`, `task`), and no triage label.
+- **Blocking** and **claim**: as in **Claim and resolve a ticket**. Native blocking links are canonical because the tracker UI then shows the frontier without opening the map.
+- **Frontier query**: `glab issue list -O json --search "Part of #<map>"`, then drop any issue with an assignee or an open blocker: a `is_blocked_by` link to an open issue (`glab api projects/:id/issues/<iid>/links`), or an open issue in its `Blocked by` line. First in map order wins.
+- **Resolve**: `glab issue note <n> --message "<answer>"`, then `glab issue close <n>`, then append the gist and link to the map's Decisions so far (`glab issue update <map> --description`).
