@@ -1,0 +1,43 @@
+{
+  "name": "agent-skills",
+  "version": "0.1.0",
+  "description": "Engineering skills for agent-assisted development: grilling, spec and ticket flows, TDD, code review, domain modelling, triage and more. One flat set a team can share.",
+  "author": {
+    "name": "javlonbek-sharipov",
+    "url": "https://github.com/javlonbek-sharipov"
+  },
+  "repository": "https://github.com/javlonbek-sharipov/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "skills",
+    "tdd",
+    "code-review",
+    "grilling",
+    "domain-modeling",
+    "triage"
+  ],
+  "skills": [
+    "./skills/skill-guide",
+    "./skills/setup-agent-skills",
+    "./skills/grill-with-docs",
+    "./skills/to-spec",
+    "./skills/to-tickets",
+    "./skills/implement",
+    "./skills/implement-spec",
+    "./skills/triage",
+    "./skills/improve-codebase-architecture",
+    "./skills/retro",
+    "./skills/handoff",
+    "./skills/grilling",
+    "./skills/domain-modeling",
+    "./skills/codebase-design",
+    "./skills/tdd",
+    "./skills/code-review",
+    "./skills/pr",
+    "./skills/prototype",
+    "./skills/research",
+    "./skills/wizard",
+    "./skills/writing-for-agents"
+  ]
+}

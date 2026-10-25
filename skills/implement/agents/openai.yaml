@@ -1,0 +1,5 @@
+interface:
+  display_name: "Implement"
+  short_description: "Build one ticket: claim, branch, TDD, review, PR if needed"
+policy:
+  allow_implicit_invocation: false

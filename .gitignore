@@ -1,0 +1,30 @@
+# Upstream clone the skills were adapted from; reference only, not part of the set
+tmp/
+
+# Secrets. The wizard skill writes captured keys to .env; keep the example, never the values
+.env
+.env.*
+!.env.example
+
+# Per-machine harness state. Shared settings (.claude/settings.json) stay in git
+.claude/settings.local.json
+
+# Dependencies and caches, should scripts/ ever grow past shell
+node_modules/
+__pycache__/
+*.pyc
+
+# OS and editor cruft
+.DS_Store
+._*
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs and leftovers from patches or merges
+*.log
+*.orig
+*.rej
